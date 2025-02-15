@@ -1,0 +1,68 @@
+{% extends "/patternsee/base.html" %}
+
+{% block title %}{{ news.title }}{% endblock %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/news_detail.css') }}">
+    <script>
+        const newsId = {{ news.id }};
+    </script>
+    <script src="{{ url_for('static', filename='js/libs/news_detail.js') }}"></script>
+</head>
+<div class="news-container">
+    <article class="news-detail">
+        <header class="news-header">
+            <h1 class="news-title">{{ news.title }}</h1>
+            <time class="news-date">{{ news.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</time>
+        </header>
+
+        {% if news.photo %}
+        <div class="news-image-container">
+            <img src="{{ url_for('static', filename='news_images/' ~ news.photo) }}" 
+                 class="news-image" 
+                 alt="{{ news.title }}"
+                 loading="lazy">
+        </div>
+        {% endif %}
+
+        <div class="news-content">
+            {{ news.content | safe }}
+        </div>
+
+        <div class="reactions">
+            <button id="like-button" class="reaction-button" aria-label="Like">
+                <i class="reaction-icon like"></i>
+                <span id="like-count" class="reaction-count">{{ like_count }}</span>
+            </button>
+            <button id="dislike-button" class="reaction-button" aria-label="Dislike">
+                <i class="reaction-icon dislike"></i>
+                <span id="dislike-count" class="reaction-count">{{ dislike_count }}</span>
+            </button>
+        </div>
+
+        <section class="comments-section">
+            <form id="comment-form" class="comment-form" method="POST" action="{{ url_for('post.add_comment', news_id=news.id) }}">
+                {{ comment_form.hidden_tag() }}
+                <div class="form-group">
+                    {{ comment_form.content(class="comment-input", placeholder="Напишите ваш комментарий...") }}
+                </div>
+                {{ comment_form.submit(class="submit-button") }}
+            </form>
+
+            <h2 class="comments-title">Комментарии</h2>
+            <div id="comments" class="comments-list">
+                {% for comment in comments %}
+                <div class="comment">
+                    <div class="comment-content">{{ comment.content }}</div>
+                    <div class="comment-meta">
+                        <span class="comment-author">User {{ comment.user_id }}</span>
+                        <time class="comment-date">{{ comment.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</time>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </article>
+</div>
+{% endblock %}

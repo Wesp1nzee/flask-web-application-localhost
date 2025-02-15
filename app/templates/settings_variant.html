@@ -1,0 +1,22 @@
+# {% extends "/patternsee/base.html" %}
+# {% block title %}Task Bank Settings{% endblock %}
+# {% block content %}
+# <form method="POST">
+#     {{ form.hidden_tag() }}
+#     <div>
+#         {{ form.subject.label }}
+#         {{ form.subject(class="form-control") }}
+#     </div>
+#     <div>
+#         {{ form.task_type.label }}
+#         {{ form.task_type(class="form-control") }}
+#     </div>
+#     <div>
+#         {{ form.num_tasks.label }}
+#         {{ form.num_tasks(class="form-control") }}
+#     </div>
+#     <div>
+#         {{ form.submit(class="btn btn-primary") }}
+#     </div>
+# </form>
+# {% endblock %}

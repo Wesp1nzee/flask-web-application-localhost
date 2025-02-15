@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Главная{% endblock %}</title>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/base.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/libs/base.js') }}" defer></script>
+</head>
+<body>
+    <div class="wrapper">
+        <nav class="navbar">
+            <button class="nav-toggle" aria-label="Переключить навигацию">
+                <span class="hamburger"></span>
+            </button>
+
+            <div class="nav-content" id="navbarButtons">
+                <div class="nav-group">
+                    <button class="btn btn-custom" onclick="location.href='/'">Главная</button>
+                    <button class="btn btn-gpt" onclick="location.href='/gpt'">GPT</button>
+                    <button class="btn btn-info" onclick="location.href='/news'">Новости</button>
+                    <button class="btn btn-info" onclick="location.href='/ide'">Интопретатор</button>
+                </div>
+
+                <div class="nav-group">
+                    {% if session.get('user_id') %}
+                        <button class="btn btn-custom profile-btn" onclick="location.href='/profile'">Профиль</button>
+                    {% else %}
+                        <a class="btn btn-light" href="/login">Вход</a>
+                        <a class="btn btn-secondary" href="/register">Регистрация</a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert">
+                {% for category, message in messages %}
+                    <p class="alert-message alert-{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,77 @@
+{% extends "/patternsee/base.html" %}
+
+{% block title %}Новости{% endblock %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/news_list.css') }}">
+</head>
+<div class="news-container">
+    <div class="news-grid">
+        {% for news in pagination.items %}
+        <article class="news-card">
+            <a href="{{ url_for('post.news_detail', news_id=news.id) }}" class="news-link">
+                <div class="news-content">
+                    <div class="news-image-container">
+                        {% if news.photo %}
+                        <img src="{{ url_for('static', filename='news_images/' ~ news.photo) }}" 
+                             class="news-image" 
+                             alt="{{ news.title }}">
+                        {% else %}
+                        <img src="{{ url_for('static', filename='images/default_news.jpg') }}" 
+                             class="news-image" 
+                             alt="{{ news.title }}">
+                        {% endif %}
+                    </div>
+                    <div class="news-text">
+                        <h2 class="news-title">{{ news.title }}</h2>
+                        <p class="news-excerpt">{{ news.content[:200] | safe }}...</p>
+                    </div>
+                </div>
+            </a>
+        </article>
+        {% endfor %}
+    </div>
+
+    <nav class="pagination">
+        <ul class="pagination-list">
+            {% if pagination.has_prev %}
+            <li>
+                <a href="{{ url_for('post.news_list', page=pagination.prev_num) }}" 
+                   class="pagination-link" 
+                   aria-label="Previous">←</a>
+            </li>
+            {% else %}
+            <li>
+                <span class="pagination-link disabled">←</span>
+            </li>
+            {% endif %}
+
+            {% for page in pagination.iter_pages() %}
+            {% if page %}
+            <li>
+                <a href="{{ url_for('post.news_list', page=page) }}" 
+                   class="pagination-link {% if page == pagination.page %}active{% endif %}">
+                   {{ page }}
+                </a>
+            </li>
+            {% else %}
+            <li><span class="pagination-ellipsis">...</span></li>
+            {% endif %}
+            {% endfor %}
+
+            {% if pagination.has_next %}
+            <li>
+                <a href="{{ url_for('post.news_list', page=pagination.next_num) }}" 
+                   class="pagination-link" 
+                   aria-label="Next">→</a>
+            </li>
+            {% else %}
+            <li>
+                <span class="pagination-link disabled">→</span>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+</div>
+{% endblock %}

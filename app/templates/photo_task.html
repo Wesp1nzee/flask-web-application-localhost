@@ -1,0 +1,98 @@
+{% extends "/patternsee/base.html" %}
+
+{% block title %}Банк Задач{% endblock %}
+
+{% block content %}
+
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/photo_task.css') }}">
+    <script src="{{ url_for('static', filename='js/libs/photo_task.js') }}"></script>
+</head>
+<div class="task-workspace">
+    {% if not session.get('user_id') %}
+    <div class="auth-alert">
+        <i class="alert-icon">ℹ️</i>
+        <span>Ваши ответы не сохраняются, так как вы не авторизованы.</span>
+    </div>
+    {% endif %}
+
+    <div class="tasks-grid">
+        {% for task in task_list %}
+        <div class="task-card">
+            <div class="task-number">Задание {{ task.id }}</div>
+            
+            <div class="task-image-container">
+                <img id="{{ task.id }}" 
+                     src="{{ url_for('static', filename='matched_photos/' + task.id + '.png') }}" 
+                     alt="Задание {{ task.id }}"
+                     loading="lazy">
+            </div>
+
+            <div class="task-interaction">
+                <div class="answer-input-group">
+                    <input type="text" 
+                           id="user-answer-{{ task.id }}" 
+                           class="answer-input" 
+                           placeholder="Введите ответ"
+                           {% if task_status_map[task.id] is defined and task_status_map[task.id] %}disabled{% endif %}>
+                    
+                    <button class="check-button" 
+                            data-task-id="{{ task.id }}"
+                            {% if task_status_map[task.id] is defined and task_status_map[task.id] %}disabled{% endif %}>
+                        Проверить
+                    </button>
+                </div>
+
+                <div class="task-status {{ 'success' if task_status_map[task.id] is defined and task_status_map[task.id] else 'error' if task_status_map[task.id] is defined and not task_status_map[task.id] else '' }}">
+                    {% if task_status_map[task.id] is defined and task_status_map[task.id] %}
+                        Задание решено ✓
+                    {% elif task_status_map[task.id] is defined and not task_status_map[task.id] %}
+                        Задание не решено ✗
+                    {% else %}
+                        Не решено
+                    {% endif %}
+                </div>
+
+                <details class="answer-details">
+                    <summary>Показать ответ</summary>
+                    <div class="answer-content">
+                        <p>Ответ: {% if task.answer == "Ответа нет" %}Ответа нет{% else %}{{ task.answer }}{% endif %}</p>
+                    </div>
+                </details>
+
+                <div class="status-message" id="status-message-{{ task.id }}"></div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <nav class="pagination">
+        <div class="pagination-container">
+            {% if current_page > 1 %}
+            <a href="{{ url_for('user.photo_task', subject_id=subject_id, task_type_id=task_type_id, page=current_page - 1) }}" 
+               class="pagination-button prev" 
+               aria-label="Предыдущая страница">
+                ←
+            </a>
+            {% endif %}
+
+            <div class="pagination-numbers">
+                {% for page in range(1, total_pages + 1) %}
+                <a href="{{ url_for('user.photo_task', subject_id=subject_id, task_type_id=task_type_id, page=page) }}" 
+                   class="pagination-number {{ 'active' if page == current_page }}">
+                    {{ page }}
+                </a>
+                {% endfor %}
+            </div>
+
+            {% if current_page < total_pages %}
+            <a href="{{ url_for('user.photo_task', subject_id=subject_id, task_type_id=task_type_id, page=current_page + 1) }}" 
+               class="pagination-button next" 
+               aria-label="Следующая страница">
+                →
+            </a>
+            {% endif %}
+        </div>
+    </nav>
+</div>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "/patternsee/base.html" %}
+
+{% block title %}GPT Чат{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/gpt.css') }}">
+<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<script>
+  window.MathJax = {
+    tex: {
+      inlineMath: [['$', '$'], ['\\(', '\\)']],
+      displayMath: [['$$', '$$'], ['\\[', '\\]']]
+    }
+  };
+</script>
+
+<main class="chat-layout">
+  <section class="history-panel">
+    <div class="panel-header">
+      <h3>История чата</h3>
+    </div>
+    <div id="chat-history"></div>
+  </section>
+
+  <section class="chat-panel">
+    <h3>Чат с GPT</h3>
+    <div id="chat-box"></div>
+    <div class="input-container">
+      <input type="text" id="user-input" placeholder="Введите сообщение...">
+      <button id="send-button">
+        <span class="send-text">Отправить</span>
+        <span class="send-icon">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+            <path d="M2.5 21L21 12L2.5 3V10L14 12L2.5 14V21Z" fill="currentColor"/>
+          </svg>
+        </span>
+      </button>
+    </div>
+  </section>
+</main>
+
+<script src="{{ url_for('static', filename='js/libs/gpt.js') }}"></script>
+{% endblock %}

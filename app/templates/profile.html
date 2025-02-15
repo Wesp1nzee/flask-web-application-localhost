@@ -1,0 +1,129 @@
+{% extends "/patternsee/base.html" %}
+
+{% block title %}Профиль пользователя{% endblock %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+</head>
+
+<div class="profile-container">
+    <div class="profile-sidebar">
+        <button class="mobile-toggle" id="sidebarToggle">
+            <span class="toggle-icon">☰</span>
+            <span class="toggle-text">Меню</span>
+        </button>
+        <div class="profile-info">
+            <img src="{{ url_for('static', filename='images/profile_icon.png') }}" alt="Иконка профиля" class="profile-icon">
+            <p class="profile-name">{{ user.email_auth.login if user.email_auth else (user.auth_methods[0].username if user.auth_methods|length > 0 else 'Неизвестный пользователь') }}</p>
+        </div>
+        <div class="sidebar-menu">
+            <button class="sidebar-btn active" data-section="profile">Профиль</button>
+            <button class="sidebar-btn" data-section="statistics">Статистика</button>
+            <button class="sidebar-btn" data-section="settings">Настройки</button>
+            <button class="sidebar-btn logout-btn" onclick="location.href='{{ url_for('user.logout') }}'">Выход</button>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="main-content">
+        <!-- Секция профиля -->
+        <div class="content-section active" id="profile-section">
+            <div class="overview-cards">
+                <div class="card">
+                    <h3>Всего решено задач</h3>
+                    <div class="chart-container">
+                        <canvas id="tasksCompletionChart"></canvas>
+                    </div>
+                </div>
+                <div class="card">
+                    <h3>Активность</h3>
+                    <div id="activity-chart"></div>
+                    <div id="activity-legend"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция статистики -->
+        <div class="content-section" id="statistics-section">
+            <div class="stats-filters">
+                <select id="subject-select">
+                    <option value="">Все предметы</option>
+                    {% for subject in subjects %}
+                        <option value="{{ subject.id }}">{{ subject.name }}</option>
+                    {% endfor %}
+                </select>
+                <div class="period-buttons">
+                    <button class="period-btn active" data-period="day">День</button>
+                    <button class="period-btn" data-period="week">Неделя</button>
+                    <button class="period-btn" data-period="month">Месяц</button>
+                </div>
+            </div>
+            <div class="stats-charts">
+                <div class="chart-card">
+                    <h3>Решенные задачи</h3>
+                    <canvas id="solvedTasksChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Правильность ответов</h3>
+                    <canvas id="accuracyChart"></canvas>
+                </div>
+                <div class="chart-card">
+                    <h3>Время выполнения</h3>
+                    <canvas id="timeSpentChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Секция настроек -->
+        <div class="content-section" id="settings-section">
+            <div class="settings-cards">
+                <div class="settings-card">
+                    <h3>Личная информация</h3>
+                    <form id="personal-info-form" class="settings-form">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="email" name="email" value="{{ user.email_auth.email if user.email_auth else '' }}" placeholder="Добавить email">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Сохранить</button>
+                    </form>
+                </div>
+                <div class="settings-card">
+                    <h3>Изменить пароль</h3>
+                    <form id="password-form" class="settings-form">
+                        <div class="form-group">
+                            <label>Текущий пароль</label>
+                            <input type="password" name="current_password">
+                        </div>
+                        <div class="form-group">
+                            <label>Новый пароль</label>
+                            <input type="password" name="new_password">
+                        </div>
+                        <div class="form-group">
+                            <label>Подтвердите пароль</label>
+                            <input type="password" name="confirm_password">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Изменить пароль</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно для уведомлений -->
+<div class="modal" id="notification-modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p id="modal-message"></p>
+    </div>
+</div>
+
+<script>
+    const activityData = {{ activity_data | safe if activity_data else '[]' }};
+    const completionPercentage = {{ stats.completion_percentage if stats and stats.completion_percentage else 0 }};
+</script>
+<script src="{{ url_for('static', filename='js/libs/profile.js') }}"></script>
+{% endblock %}

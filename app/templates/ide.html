@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python IDE</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ide.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.36.1/min/vs/loader.min.js"></script>
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/favicon.ico') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-toggle" onclick="toggleNav()">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <div class="navbar-content">
+            <div class="nav-left">
+                <button onclick="location.href='/'">Главная</button>
+                <button onclick="location.href='/gpt'">GPT</button>
+                <button onclick="location.href='/news'">Новости</button>
+                <button onclick="location.href='/ide'">Интопретатор</button>
+            </div>
+            <div class="nav-right">
+                {% if session.get('user_id') %}
+                    <button onclick="location.href='/profile'">Профиль</button>
+                {% else %}
+                    <button onclick="location.href='/login'">Вход</button>
+                    <button onclick="location.href='/register'">Регистрация</button>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="editor-container">
+            <div id="monaco-editor"></div>
+        </div>
+        <div class="resize-handle"></div>
+        <div class="output-container" style="height: 300px;">
+            <div id="output" class="output"></div>
+        </div>
+        <div id="interactive-input-container" style="display: none; margin-top: 10px;">
+            <input type="text" id="interactive-input" placeholder="Введите ваш ввод..." />
+            <button id="send-input-button" onclick="sendInput()">Отправить</button>
+        </div>
+        <div class="controls">
+            <button onclick="window.runCode()">Запустить Код</button>
+            <button onclick="window.clearOutput()">Очистить Код</button>
+            <button id="cancelButton" onclick="window.cancelExecution()" disabled>Отменить Выполнение</button>
+            <button id="getHelpButton" onclick="window.getHelp()" disabled>Помочь GPT</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/libs/ide.js') }}"></script>
+    <script>
+        function toggleNav() {
+            document.querySelector('.navbar-content').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>

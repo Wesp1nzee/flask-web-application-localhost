@@ -1,0 +1,216 @@
+{% extends "/patternsee/base_admin.html" %}
+
+{% block title %}Банк Задач{% endblock %}
+
+{% block content %}
+<div class="admin-container">
+    {% if session.get('admin_logged_in') %}
+        <h1 class="admin-title">Админ Панель</h1>
+        
+        <div class="stats-grid">
+            <!-- Статистика пользователей и задач -->
+            <div class="stats-card">
+                <div class="card-content">
+                    <h5 class="card-title">Общее количество пользователей</h5>
+                    <p class="card-value">{{ total_users }}</p>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <div class="card-content">
+                    <h5 class="card-title">Общее количество задач</h5>
+                    <p class="card-value">{{ total_tasks }}</p>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <div class="card-content">
+                    <h5 class="card-title">Решенные задачи</h5>
+                    <p class="card-value">{{ total_resolved_tasks }}</p>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <div class="card-content">
+                    <h5 class="card-title">Задачи, решенные сегодня</h5>
+                    <p class="card-value">{{ total_tasks_today }}</p>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="section-title">Статистика по серверу</h3>
+        <div class="server-stats-grid">
+            <div class="stats-card">
+                <div class="card-content">
+                    <h5 class="card-title">Загрузка процессора</h5>
+                    <p class="card-value">{{ cpu_usage }}%</p>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <div class="card-content">
+                    <h5 class="card-title">Использование памяти</h5>
+                    <p class="card-value">{{ memory_usage }}%</p>
+                </div>
+            </div>
+
+            <div class="stats-card">
+                <div class="card-content">
+                    <h5 class="card-title">Использование диска</h5>
+                    <p class="card-value">{{ disk_usage }}%</p>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning">
+            Вы не авторизованы. Пожалуйста, войдите в систему как администратор.
+        </div>
+    {% endif %}
+</div>
+
+<style>
+    /* Container styles */
+    .admin-container {
+        max-width: 1000px;
+        margin: 3rem auto;
+        padding: 0 20px;
+    }
+
+    /* Title styles */
+    .admin-title {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+        color: #333;
+    }
+
+    .section-title {
+        font-size: 1.5rem;
+        margin: 2.5rem 0 1.5rem;
+        color: #444;
+    }
+
+    /* Grid layouts */
+    .stats-grid,
+    .server-stats-grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+
+    /* Card styles */
+    .stats-card {
+        background: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stats-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    }
+
+    .card-content {
+        padding: 1.5rem;
+    }
+
+    .card-title {
+        font-size: 1rem;
+        color: #666;
+        margin-bottom: 0.75rem;
+        font-weight: 500;
+    }
+
+    .card-value {
+        font-size: 1.5rem;
+        color: #333;
+        font-weight: bold;
+        margin: 0;
+    }
+
+    /* Alert styles */
+    .alert {
+        padding: 1rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .alert-warning {
+        background-color: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeeba;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .admin-container {
+            margin: 2rem auto;
+        }
+
+        .stats-grid,
+        .server-stats-grid {
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 1rem;
+        }
+
+        .card-content {
+            padding: 1rem;
+        }
+
+        .card-value {
+            font-size: 1.25rem;
+        }
+
+        .admin-title {
+            font-size: 1.75rem;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+        }
+    }
+
+    /* Dark mode support */
+    @media (prefers-color-scheme: dark) {
+        .stats-card {
+            background: #2a2a2a;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-title {
+            color: #aaa;
+        }
+
+        .card-value {
+            color: #fff;
+        }
+
+        .admin-title,
+        .section-title {
+            color: #fff;
+        }
+
+        .alert-warning {
+            background-color: #2c2516;
+            color: #ffd970;
+            border-color: #665c3c;
+        }
+    }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const cards = document.querySelectorAll('.stats-card');
+        cards.forEach((card, index) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, index * 100);
+        });
+    });
+
+</script>
+{% endblock %}

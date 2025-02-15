@@ -1,0 +1,176 @@
+{% extends "/patternsee/base.html" %}
+
+{% block title %}{{ topic.topic_name }}{% endblock %}
+
+{% block content %}
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+<style>
+.container-summary {
+    max-width: 1000px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+.content-summary {
+    margin-bottom: 30px;
+}
+
+.alert-summary {
+    padding: 15px;
+    border-radius: 5px;
+    background-color: #d1ecf1;
+    color: #0c5460;
+    margin-bottom: 20px;
+}
+
+.list-group-summary {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-group-item-summary {
+    margin-bottom: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.list-group-item-summary:hover {
+    background-color: #f1f1f1;
+    border-color: #d0d0d0;
+}
+
+.form-check-summary {
+    margin-bottom: 10px;
+}
+
+.form-check-input-summary {
+    margin-right: 10px;
+}
+
+.form-check-label-summary {
+    display: block;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.form-check-input-summary:checked + .form-check-label-summary {
+    background-color: #e6f7ff;
+    border-color: #91d5ff;
+}
+
+.form-check-label-summary:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+
+.btn-summary {
+    display: inline-block;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    background-color: #007bff;
+    color: white;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.btn-summary:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+.form-check-input-summary {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+}
+
+.form-check-label-summary {
+    display: block;
+    padding: 10px;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.form-check-input-summary:checked + .form-check-label-summary {
+    background-color: #e6f7ff;
+    border-color: #3aa6e9;
+}
+
+.form-check-label-summary:hover {
+    background-color: #f5f5f5;
+    border-color: #ccc;
+}
+</style>
+<div class="container-summary">
+    <h1>{{ topic.topic_name }}</h1>
+    <div class="content-summary">
+        {{ summary.content | safe }}
+    </div>
+    <h2>Тесты</h2>
+    {% if user_progress %}
+        <div class="alert-summary alert-info">
+            Вы уже прошли этот тест и набрали {{ user_progress.correct_answers }} из {{ user_progress.total_questions }} правильных ответов.
+        </div>
+    {% else %}
+        <form method="POST" action="{{ url_for('summary.check_test_summary', topic_id=topic.id) }}">
+            <ul class="list-group-summary">
+                {% for task in tasks %}
+                    <li class="list-group-item-summary">
+                        <p><strong>{{ task.question }}</strong></p>
+                        <div class="form-check-summary">
+                            <input class="form-check-input-summary" type="radio" name="answer_{{ task.id }}" id="answer_{{ task.id }}_a" value="A">
+                            <label class="form-check-label-summary" for="answer_{{ task.id }}_a">
+                                A. {{ task.option_a }}
+                            </label>
+                        </div>
+                        <div class="form-check-summary">
+                            <input class="form-check-input-summary" type="radio" name="answer_{{ task.id }}" id="answer_{{ task.id }}_b" value="B">
+                            <label class="form-check-label-summary" for="answer_{{ task.id }}_b">
+                                B. {{ task.option_b }}
+                            </label>
+                        </div>
+                        <div class="form-check-summary">
+                            <input class="form-check-input-summary" type="radio" name="answer_{{ task.id }}" id="answer_{{ task.id }}_c" value="C">
+                            <label class="form-check-label-summary" for="answer_{{ task.id }}_c">
+                                C. {{ task.option_c }}
+                            </label>
+                        </div>
+                        <div class="form-check-summary">
+                            <input class="form-check-input-summary" type="radio" name="answer_{{ task.id }}" id="answer_{{ task.id }}_d" value="D">
+                            <label class="form-check-label-summary" for="answer_{{ task.id }}_d">
+                                D. {{ task.option_d }}
+                            </label>
+                        </div>
+                    </li>
+                {% endfor %}
+            </ul>
+            <button type="submit" class="btn-summary">Отправить ответы</button>
+        </form>
+    {% endif %}
+</div>
+<script>
+    MathJax.typesetPromise().then(() => {
+        console.log('Формулы успешно обработаны!');
+    }).catch((err) => {
+        console.error('Ошибка обработки формул:', err);
+    });
+</script>
+{% endblock %}

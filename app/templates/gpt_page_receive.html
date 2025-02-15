@@ -1,0 +1,90 @@
+{% extends "/patternsee/base.html" %}
+
+{% block title %}GPT Чат{% endblock %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/gpt_page_recaive.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/marked@4.3.0/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.1/purify.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github-dark.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
+</head>
+
+<main class="chat-layout">
+    <button id="toggle-history-btn" class="toggle-history">История чата</button>
+
+    <section class="history-panel">
+        <div class="panel-header">
+            <h3>История чата</h3>
+            <button id="close-history-btn" class="close-history">Скрыть</button>
+        </div>
+        
+        <div id="chat-history" class="history-content">
+            {% if dialogues %}
+                {% for dialogue in dialogues %}
+                    <button class="history-button" onclick="location.href='/gpt/{{ dialogue.id }}'">
+                        {{ dialogue.title }}
+                    </button>
+                {% endfor %}
+            {% else %}
+                <p class="no-history">История чатов отсутствует.</p>
+            {% endif %}
+        </div>
+    </section>
+
+    <section class="chat-panel">
+        <div class="panel-header">
+            <h3>Чат с GPT</h3>
+        </div>
+
+        <div id="chat-box" class="messages-container">
+            {% for msg in messages %}
+                <div class="message {{ 'user-message' if msg.role == 'user' else 'gpt-message' }}">
+                    <div class="message-header">
+                        <strong>{{ 'Вы' if msg.role == 'user' else 'GPT' }}</strong>
+                        <span class="message-time">{{ msg.timestamp if msg.timestamp else '' }}</span>
+                    </div>
+                    <div class="message-content">
+                        {% if msg.role == 'user' %}
+                            {{ msg.text }}
+                        {% else %}
+                            {{ msg.text|safe }}
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+        <div class="input-container">
+            <input type="text" 
+                   id="user-input" 
+                   placeholder="Введите сообщение..." 
+                   aria-label="Сообщение">
+            <button id="send-button">
+                <span class="send-text">Отправить</span>
+                <span class="send-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2.5 21L21 12L2.5 3V10L14 12L2.5 14V21Z" fill="currentColor"/>
+                    </svg>
+                </span>
+            </button>
+        </div>
+    </section>
+</main>
+
+<input type="hidden" id="current-dialogue-id" value="{{ current_dialogue.id if current_dialogue else '' }}">
+<script src="{{ url_for('static', filename='js/libs/gpt_page_recaive.js') }}"></script>
+{% endblock %}

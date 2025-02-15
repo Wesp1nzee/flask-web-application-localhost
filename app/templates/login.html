@@ -1,0 +1,208 @@
+{% extends "/patternsee/base.html" %}
+
+{% block title %}Авторизация{% endblock %}
+
+{% block content %}
+<style>
+    .auth-container {
+        max-width: 400px;
+        margin: 2rem auto;
+        padding: 2rem;
+    }
+
+    .auth-title {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #2c3e50;
+        font-size: 2rem;
+        font-weight: 600;
+    }
+
+    .auth-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 15px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        transition: transform 0.3s ease;
+    }
+
+    .auth-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #34495e;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-input:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: none;
+    }
+
+    .submit-button {
+        width: 100%;
+        padding: 1rem;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .submit-button:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+    }
+
+    .submit-button:active {
+        transform: translateY(0);
+    }
+
+    .telegram-auth {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 2rem 0;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .divider span {
+        padding: 0 1rem;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+    }
+
+    @media (max-width: 480px) {
+        .auth-container {
+            margin: 1rem;
+            padding: 1rem;
+        }
+
+        .auth-card {
+            padding: 1.5rem;
+        }
+
+        .auth-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<div class="auth-container">
+    <h1 class="auth-title">Вход в аккаунт</h1>
+    
+    <div class="auth-card">
+        <div class="telegram-auth">
+            <script async src="https://telegram.org/js/telegram-widget.js?22"
+                data-telegram-login="{{ bot_username }}"
+                data-size="large"
+                data-auth-url="/auth-tg"
+                data-request-access="write">
+            </script>
+        </div>
+
+        <div class="divider">
+            <span>или</span>
+        </div>
+
+        <form id="login-form" method="POST" action="{{ url_for('auth.login') }}">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                <label class="form-label" for="email">Email</label>
+                {{ form.email(class="form-input", id="email", placeholder="Введите ваш email") }}
+                {% for error in form.email.errors %}
+                    <div class="error-message">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password">Пароль</label>
+                {{ form.password(class="form-input", id="password", placeholder="Введите ваш пароль") }}
+                <div id="login_error_message_login" class="error-message"></div>
+                {% for error in form.password.errors %}
+                    <div class="error-message">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="submit-button">Войти</button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const loginForm = document.getElementById('login-form');
+    const errorMessage = document.getElementById('login_error_message_login');
+
+    loginForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+        const formData = new FormData(loginForm);
+        
+        fetch('{{ url_for("auth.login") }}', {
+            method: 'POST',
+            body: new URLSearchParams(formData),
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                window.location.href = data.redirect_url;
+            } else {
+                errorMessage.textContent = data.message;
+                errorMessage.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            errorMessage.textContent = 'Произошла ошибка. Попробуйте еще раз.';
+            errorMessage.style.display = 'block';
+        });
+    });
+});
+</script>
+{% endblock %}

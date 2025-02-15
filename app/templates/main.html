@@ -1,0 +1,344 @@
+{% extends "/patternsee/base.html" %}
+
+{% block title %}Главная страница{% endblock %}
+
+{% block content %}
+<style>
+
+    .flex-container {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .typewriter h1 {
+        overflow: hidden;
+        border-right: .15em solid #007bff;
+        white-space: nowrap;
+        margin: 0;
+        width: fit-content;
+        opacity: 0;
+        max-width: 100%; /* Ограничиваем максимальную ширину */
+        font-size: clamp(1.2rem, 4vw, 2rem); /* Адаптивный размер шрифта */
+    }
+
+    @keyframes blink-caret {
+        from, to { border-color: transparent }
+        50% { border-color: #007bff; }
+    }
+
+    @keyframes typing {
+        from { width: 0 }
+        to { width: 18ch } 
+    }
+
+    .main-content {
+        margin-top: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        width: 50%;
+        margin-left: 60px;
+        font-size: 20px;
+        overflow: hidden;
+        text-align: justify; 
+        text-justify: inter-word; 
+        margin-bottom: 1.5rem; 
+        line-height: 1.6; 
+    }
+
+    .side-content {
+        margin-top: 20px;
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        border-radius: 10px;
+        width: 40%;
+        margin-right: 60px;
+        font-size: 20px;
+    }
+
+    .accordion {
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .accordion-item {
+        margin-bottom: 10px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        overflow: hidden; 
+    }
+
+
+    .accordion-header {
+        margin: 0;
+    }
+
+    .accordion-button {
+      width: 100%;
+      padding: 15px;
+      background-color: #f8f9fa;
+      border: none;
+      text-align: left;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      position: relative;
+      transition: background-color 0.3s ease;
+    }
+
+    .accordion-button:hover {
+      background-color: #e9ecef;
+      }
+
+    .accordion-button h2 {
+        margin: 0;
+        font-size: 1.2em;
+        transition: color 0.3s ease;
+    }
+
+    .accordion-button::after {
+        content: '+';
+        position: absolute;
+        right: 15px;
+        transition: transform 0.3s ease;
+    }
+
+    .accordion-button[aria-expanded="true"]::after {
+        transform: rotate(45deg);
+    }
+
+    .accordion-content {
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.3s ease-out;
+        padding: 0 15px;
+        background-color: white;
+    }
+
+    .accordion-content.show {
+        max-height: 500px; 
+        padding: 15px;
+        transition: max-height 0.5s ease-in;
+    }
+
+    .custom-button {
+        display: block;
+        width: 100%;
+        padding: 10px;
+        margin: 5px 0;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1.1em;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    .custom-button:hover {
+        background-color: #0056b3;
+        transform: translateY(-2px);
+    }
+
+    .custom-button:active {
+        transform: translateY(0);
+    }
+    @media (min-width: 768px) {
+        .flex-container {
+            flex-direction: row;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .main-content,
+        .side-content {
+            width: 90%;
+            margin: 20px auto;
+        }
+
+        .typewriter h1 {
+            font-size: 20px; 
+            white-space: normal; 
+            border-right: none; 
+            line-height: 1.3; 
+            padding-right: 10px; 
+            animation: none; 
+        }
+
+        .main-content p {
+            font-size: 16px; 
+            text-align: left; 
+        }
+    }
+    @media (max-width: 480px) {
+        .typewriter h1 {
+            font-size: 18px; 
+        }
+    }
+</style>
+
+<div class="flex-container">
+    <div class="main-content" style="margin-right: 20px;">
+        <div class="typewriter">
+            <h1>ЭТИ ЗАДАНИЯ БУДУТ НА ЕГЭ!?</h1>
+        </div>
+
+        <p>🔥 Внимание! Инсайдерская информация от экспертов ЕГЭ и ОГЭ 2025 года! Мы проанализировали более +1000 заданий и готовы раскрыть секреты высоких баллов. Узнайте первыми, какие задания появятся на экзаменах этого года!</p>
+        <p>📚 Эксклюзивно для вас: решения сложнейших задач, авторские конспекты по темам, и самое главное – стратегии, которые действительно работают. Присоединяйтесь к успешным!</p>  
+        <p>⏰ Время играет против вас – до экзаменов осталось меньше 4 месяцев. Но у нас есть проверенный план подготовки! Начните прямо сейчас и получите доступ к уникальной базе заданий, которые с высокой вероятностью появятся на ЕГЭ-2025/ОГЭ-2025. Не упустите свой шанс поступить в топовый вуз мечты!</p>
+
+        <div class="accordion" id="mainAccordion">
+
+          <div class="accordion-item">
+              <h2 class="accordion-header">
+                  <button class="accordion-button" data-target="section1">
+                      <h2>Банк задач ЕГЭ</h2>
+                  </button>
+              </h2>
+              <div class="accordion-content" id="section1">
+                  <button class="custom-button" onclick="window.location.href='/task_list/1'">Физика</button>
+                  <button class="custom-button" onclick="window.location.href='/task_list/1'">Информатика</button>
+                  <button class="custom-button" onclick="window.location.href='/task_list/1'">Русский язык</button>
+                  <button class="custom-button" onclick="window.location.href='/task_list/1'">Математика</button>
+              </div>
+          </div>
+      
+          <div class="accordion-item">
+              <h2 class="accordion-header">
+                  <button class="accordion-button" data-target="section2">
+                      <h2>Банк задач ОГЭ</h2>
+                  </button>
+              </h2>
+              <div class="accordion-content" id="section2">
+                  <button class="custom-button" onclick="window.location.href='/boot.html'">Физика</button>
+                  <button class="custom-button" onclick="window.location.href='/boot.html'">Математика</button>
+                  <button class="custom-button" onclick="window.location.href='/boot.html'">Информатика</button>
+                  <button class="custom-button" onclick="window.location.href='/boot.html'">Выдвинуть ответ</button>
+              </div>
+          </div>
+      
+          <div class="accordion-item">
+              <h2 class="accordion-header">
+                  <button class="accordion-button" data-target="section3">
+                      <h2>Конспекты ЕГЭ</h2>
+                  </button>
+              </h2>
+              <div class="accordion-content" id="section3">
+                  <button class="custom-button" onclick="window.location.href='/post-list/phy'">Физика</button>
+                  <button class="custom-button" onclick="window.location.href='/post-list'">Математика</button>
+                  <button class="custom-button" onclick="window.location.href='/post-list'">Информатика</button>
+                  <button class="custom-button" onclick="window.location.href='/post-list'">Выдвинуть ответ</button>
+              </div>
+          </div>
+      
+          <div class="accordion-item">
+              <h2 class="accordion-header">
+                  <button class="accordion-button" data-target="section4">
+                      <h2>Конспекты ОГЭ</h2>
+                  </button>
+              </h2>
+              <div class="accordion-content" id="section4">
+                  <button class="custom-button" onclick="window.location.href='/post-list'">Физика</button>
+                  <button class="custom-button" onclick="window.location.href='/post-list'">Математика</button>
+                  <button class="custom-button" onclick="window.location.href='/post-list'">Информатика</button>
+                  <button class="custom-button" onclick="window.location.href='/post-list'">Слова Слова</button>
+              </div>
+          </div>
+      </div>
+    </div>
+
+    <div class="side-content">
+        <h2>Досрочный период ЕГЭ:</h2>
+        <p>21 марта — география и литература;<br>
+        25 марта — русский язык;<br>
+        28 марта — математика базового и профильного уровней;<br>
+        1 апреля — биология, иностранные языки (письменная часть), физика;<br>
+        4 апреля — иностранные языки (устная часть);<br>
+        8 апреля — информатика и обществознание;<br>
+        11 апреля — история и химия.</p>
+        <h2>Основной период ЕГЭ:</h2>
+        <p>23 мая — история, литература и химия;<br>
+        27 мая — математика базового и профильного уровней;<br>
+        30 мая — русский язык;<br>
+        2 июня — обществознание, физика;<br>
+        5 июня — биология, география и иностранные языки (письменная часть);<br>
+        10 и 11 июня — иностранные языки (устная часть), информатика.</p>
+        <h2>Досрочный период ОГЭ:</h2>
+        <p>22 апреля — математика;<br>
+        25 апреля — русский язык;<br>
+        29 апреля — информатика, литература, обществознание, химия;<br>
+        6 мая — биология, география, иностранные языки, история, физика.</p>
+        <h2>Основной период ОГЭ:</h2>
+        <p>21 и 22 мая — иностранные языки;<br>
+        26 мая — биология, информатика, обществознание, химия;<br>
+        29 мая — география, история, физика, химия;<br>
+        3 июня — математика;<br>
+        6 июня — география, информатика и обществознание;<br>
+        9 июня — русский язык;<br>
+        16 июня — биология, информатика, литература, физика.</p>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const typewriter = document.querySelector('.typewriter h1');
+    const text = typewriter.textContent;
+    typewriter.textContent = ''; 
+    typewriter.style.opacity = '1'; 
+
+    let i = 0;
+    const typingSpeed = 100; 
+
+    function type() {
+        if (i < text.length) {
+            typewriter.textContent += text.charAt(i);
+            i++;
+            setTimeout(type, typingSpeed);
+        } else {
+            
+            typewriter.style.borderRight = '.15em solid #007bff';
+            typewriter.style.animation = 'blink-caret .75s step-end infinite';
+        }
+    }
+
+    setTimeout(type, 500);
+
+
+    const accordionButtons = document.querySelectorAll('.accordion-button');
+    
+    accordionButtons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const content = document.getElementById(this.getAttribute('data-target'));
+            const isExpanded = this.getAttribute('aria-expanded') === 'true';
+            
+            document.querySelectorAll('.accordion-content').forEach(item => {
+                if (item !== content) {
+                    item.style.maxHeight = '0';
+                    item.classList.remove('show');
+                    const btn = item.previousElementSibling.querySelector('.accordion-button');
+                    if (btn) btn.setAttribute('aria-expanded', 'false');
+                }
+            });
+
+            if (!isExpanded) {
+                content.classList.add('show');
+                content.style.maxHeight = content.scrollHeight + "px";
+                this.setAttribute('aria-expanded', 'true');
+            } else {
+                content.classList.remove('show');
+                content.style.maxHeight = '0';
+                this.setAttribute('aria-expanded', 'false');
+            }
+        });
+    });
+
+    window.addEventListener('resize', function() {
+        const expandedContent = document.querySelector('.accordion-content.show');
+        if (expandedContent) {
+            expandedContent.style.maxHeight = expandedContent.scrollHeight + "px";
+        }
+    });
+});
+</script>
+{% endblock %}

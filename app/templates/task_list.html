@@ -1,0 +1,28 @@
+{% extends "/patternsee/base.html" %}
+
+{% block title %}Банк Задач{% endblock %}
+
+{% block content %}
+<head>
+    <script>
+    </script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/task_list.css') }}">
+    <script src="{{ url_for('static', filename='js/libs/task_list.js') }}" defer></script>
+</head>
+<div class="tasks-container">
+    <header class="tasks-header">
+        <h1 class="tasks-title">Список задач</h1>
+        <div class="tasks-counter">Всего задач: {{ task_count }}</div>
+    </header>
+    
+    <div class="tasks-list">
+        {% for task in task_list %}
+        <a href="/photo_task/1/{{ task.number }}" class="task-card">
+            <span class="task-number">{{ task.id }}</span>
+            <span class="task-name">{{ task.name }}</span>
+            <span class="task-arrow">→</span>
+        </a>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

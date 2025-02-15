@@ -1,0 +1,139 @@
+{% extends "/patternsee/base_admin.html" %}
+
+{% block content %}
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/news_management.css') }}">
+    <script src="https://cdn.ckeditor.com/ckeditor5/40.1.0/classic/ckeditor.js"></script>
+    <script src="{{ url_for('static', filename='js/admin/news_management.js') }}" defer></script>
+</head>
+
+<div class="admin-container">
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3>Управление новостями</h3>
+        </div>
+        <div class="sidebar-menu">
+            <button class="sidebar-btn" data-target="add-news">Добавить новость</button>
+            <button class="sidebar-btn" data-target="edit-news">Изменить новость</button>
+            <button class="sidebar-btn" data-target="delete-news">Удалить новость</button>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="content-section" id="add-news">
+            <div class="section-header">
+                <h2>Добавление новости</h2>
+            </div>
+            <div class="news-form">
+                <form id="addNewsForm">
+                    <div class="form-group">
+                        <label for="newsTitle">Заголовок новости:</label>
+                        <input type="text" id="newsTitle" name="title" required class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newsPhoto">Изображение:</label>
+                        <input type="file" id="newsPhoto" name="photo" accept="image/*" required>
+                        <div class="image-preview-container">
+                            <img id="photoPreview" class="image-preview" src="" alt="">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newsContent">Содержание новости:</label>
+                        <div id="editor"></div>
+                        <textarea id="newsContent" name="content" style="display: none;"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="newsTags">Теги (через запятую):</label>
+                        <input type="text" id="newsTags" name="tags" class="form-control" 
+                               placeholder="Например: важное, обновление, анонс">
+                    </div>
+
+                    <button type="submit" class="btn btn-custom">Опубликовать новость</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Секция изменения новости -->
+        <div class="content-section" id="edit-news">
+            <div class="section-header">
+                <h2>Изменение новости</h2>
+            </div>
+            <div class="search-form">
+                <input type="text" id="searchNewsTitle" placeholder="Введите заголовок новости">
+                <button class="btn btn-custom" id="searchNewsBtn">Найти</button>
+            </div>
+            <div id="editNewsForm" class="news-form" style="display: none;">
+                <form id="updateNewsForm">
+                    <input type="hidden" name="news_id">
+                    <div class="form-group">
+                        <label for="editNewsTitle">Заголовок новости:</label>
+                        <input type="text" id="editNewsTitle" name="title" required class="form-control">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editNewsPhoto">Текущее изображение:</label>
+                        <div class="current-image-container">
+                            <img id="currentNewsImage" src="" alt="Текущее изображение">
+                        </div>
+                        <label for="editNewsPhoto">Новое изображение (оставьте пустым, чтобы сохранить текущее):</label>
+                        <input type="file" id="editNewsPhoto" name="photo" accept="image/*">
+                        <div class="image-preview-container">
+                            <img id="editPhotoPreview" class="image-preview" src="" alt="">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="editNewsContent">Содержание новости:</label>
+                        <div id="editEditor"></div>
+                        <textarea id="editNewsContent" name="content" style="display: none;"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="editNewsTags">Теги (через запятую):</label>
+                        <input type="text" id="editNewsTags" name="tags" class="form-control">
+                    </div>
+
+                    <button type="submit" class="btn btn-custom">Сохранить изменения</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Секция удаления новости -->
+        <div class="content-section" id="delete-news">
+            <div class="section-header">
+                <h2>Удаление новости</h2>
+            </div>
+            <div class="search-form">
+                <input type="text" id="deleteNewsTitle" placeholder="Введите заголовок новости">
+                <button class="btn btn-custom" id="searchDeleteNewsBtn">Найти</button>
+            </div>
+            <div id="deleteNewsPreview" class="news-preview" style="display: none;">
+                <div class="preview-content">
+                    <h3></h3>
+                    <div class="preview-image">
+                        <img src="" alt="Изображение новости">
+                    </div>
+                    <div class="preview-text"></div>
+                    <div class="preview-tags"></div>
+                    <div class="preview-date"></div>
+                    <button class="btn btn-danger" id="confirmDeleteNewsBtn">Удалить новость</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Модальное окно подтверждения -->
+<div class="modal" id="confirmModal">
+    <div class="modal-content">
+        <h4>Подтверждение действия</h4>
+        <p>Вы уверены, что хотите выполнить это действие?</p>
+        <div class="modal-buttons">
+            <button class="btn btn-custom" id="confirmYes">Да</button>
+            <button class="btn btn-secondary" id="confirmNo">Нет</button>
+        </div>
+    </div>
+</div>
+{% endblock %}

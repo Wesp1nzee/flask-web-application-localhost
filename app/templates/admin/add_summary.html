@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ Панель - Добавить Конспект</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/libs/bootstrap.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/libs/bootstrapv4.css') }}">
+    <script src="{{ url_for('static', filename='js/libs/bootstrap.min.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+    <script src="//cdn.ckeditor.com/4.16.2/full/ckeditor.js"></script>
+    <style>
+        .header-container {
+            background-color: rgba(0, 123, 255, 0.8); /* Полупрозрачный синий фон */
+            color: white;
+            padding: 15px 20px;
+            height: 100px
+        }
+        .ta-editor {
+            min-height: 300px;
+            height: auto;
+            overflow: auto;
+            font-family: inherit;
+            font-size: 100%;
+        }
+    </style>
+    <meta name="robots" content="noindex">
+    <link rel='stylesheet prefetch' href='https://netdna.bootstrapcdn.com/bootstrap/3.0.1/css/bootstrap.min.css'>
+    <link rel='stylesheet prefetch' href='https://netdna.bootstrapcdn.com/font-awesome/4.0.0/css/font-awesome.min.css'>
+</head>
+<body>
+    <div class="container-fluid">
+        <nav class="navbar navbar-expand-md navbar-light bg-transparent">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarButtons" aria-controls="navbarButtons" aria-expanded="false" aria-label="Переключить навигацию">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+    
+            <div class="collapse navbar-collapse justify-content-between" id="navbarButtons">
+                <div class="navbar-nav">
+                    <button class="btn btn-custom btn-lg mr-2" onclick="location.href='/admin'">Главная</button>
+                    <button class="btn btn-gpt btn-lg" onclick="location.href='{{ url_for('admin.add_summary') }}'">Конспекты</button>
+                </div>
+
+                <div class="navbar-nav">
+                        <a class="btn btn-light btn-lg mb-2 mb-md-0" href="'{{ url_for('admin.news_admin') }}'">Новости</a>
+                        <a class="btn btn-secondary btn-lg ml-md-2" href="'{{ url_for('admin.logout_admin') }}'">Выход</a>
+                </div>
+            </div>
+        </nav>
+    </div>
+    
+    {% if session.get('user_id') %}
+    {% else %}
+    {% endif %}
+    
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div class="alert alert-dismissible fade show" role="alert">
+                {% for category, message in messages %}
+                    <p class="alert alert-{{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    
+    <div class="container">
+        <h1>Добавить Конспект</h1>
+        <form method="POST">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.subject_name.label(class="form-label") }}
+                {{ form.subject_name(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.topic_name.label(class="form-label") }}
+                {{ form.topic_name(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.content.label(class="form-label") }}
+                {{ form.content(class="form-control ta-editor") }}
+            </div>
+            <div class="form-group">
+                <label>Задачи</label>
+                <div id="tasks">
+                    {% for task in form.tasks %}
+                        <div class="task">
+                            {{ task.hidden_tag() }}
+                            {{ task.task_question.label(class="form-label") }}
+                            {{ task.task_question(class="form-control") }}
+                            {{ task.option1.label(class="form-label") }}
+                            {{ task.option1(class="form-control") }}
+                            {{ task.option2.label(class="form-label") }}
+                            {{ task.option2(class="form-control") }}
+                            {{ task.option3.label(class="form-label") }}
+                            {{ task.option3(class="form-control") }}
+                            {{ task.option4.label(class="form-label") }}
+                            {{ task.option4(class="form-control") }}
+                            {{ task.correct_option.label(class="form-label") }}
+                            {{ task.correct_option(class="form-control") }}
+                            <hr>
+                        </div>
+                    {% endfor %}
+                </div>
+                <button type="button" class="btn btn-secondary" id="add-task">Добавить задачу</button>
+            </div>
+            <div class="form-group">
+                {{ form.submit(class="btn btn-primary") }}
+            </div>
+        </form>
+    </div>
+
+    <script>
+        // Инициализация CKEditor только для поля content
+        CKEDITOR.replace('content');
+
+        // Добавление новой задачи
+        document.getElementById('add-task').addEventListener('click', function() {
+            var tasksDiv = document.getElementById('tasks');
+            var index = tasksDiv.getElementsByClassName('task').length;
+            var newTaskHtml = `
+                <div class="task">
+                    <input type="hidden" name="tasks-${index}-csrf_token" value="${csrf_token}">
+                    <label for="tasks-${index}-task_question" class="form-label">Вопрос</label>
+                    <input type="text" name="tasks-${index}-task_question" id="tasks-${index}-task_question" class="form-control">
+                    <label for="tasks-${index}-option1" class="form-label">Вариант 1</label>
+                    <input type="text" name="tasks-${index}-option1" id="tasks-${index}-option1" class="form-control">
+                    <label for="tasks-${index}-option2" class="form-label">Вариант 2</label>
+                    <input type="text" name="tasks-${index}-option2" id="tasks-${index}-option2" class="form-control">
+                    <label for="tasks-${index}-option3" class="form-label">Вариант 3</label>
+                    <input type="text" name="tasks-${index}-option3" id="tasks-${index}-option3" class="form-control">
+                    <label for="tasks-${index}-option4" class="form-label">Вариант 4</label>
+                    <input type="text" name="tasks-${index}-option4" id="tasks-${index}-option4" class="form-control">
+                    <label for="tasks-${index}-correct_option" class="form-label">Правильный ответ</label>
+                    <input type="text" name="tasks-${index}-correct_option" id="tasks-${index}-correct_option" class="form-control">
+                    <hr>
+                </div>
+            `;
+            tasksDiv.insertAdjacentHTML('beforeend', newTaskHtml);
+        });
+    </script>
+</body>
+</html>

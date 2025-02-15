@@ -1,0 +1,312 @@
+{% extends "/patternsee/base.html" %}
+
+{% block title %}Регистрация{% endblock %}
+
+{% block content %}
+<style>
+    .register-container {
+        max-width: 450px;
+        margin: 2rem auto;
+        padding: 2rem;
+    }
+
+    .register-title {
+        text-align: center;
+        margin-bottom: 2rem;
+        color: #2c3e50;
+        font-size: 2rem;
+        font-weight: 600;
+        letter-spacing: -0.5px;
+    }
+
+    .register-card {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 16px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        padding: 2rem;
+        backdrop-filter: blur(10px);
+        transition: all 0.3s ease;
+    }
+
+    .register-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #34495e;
+        font-weight: 500;
+        font-size: 0.95rem;
+        transition: color 0.3s ease;
+    }
+
+    .form-input {
+        width: 100%;
+        padding: 0.9rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.9);
+    }
+
+    .form-input:focus {
+        border-color: #3498db;
+        outline: none;
+        box-shadow: 0 0 0 4px rgba(52, 152, 219, 0.15);
+    }
+
+    .form-input:hover {
+        border-color: #bdc3c7;
+    }
+
+    .error-message {
+        color: #e74c3c;
+        font-size: 0.85rem;
+        margin-top: 0.5rem;
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .submit-button {
+        width: 100%;
+        padding: 1rem;
+        background: #3498db;
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 1rem;
+    }
+
+    .submit-button:hover {
+        background: #2980b9;
+        transform: translateY(-2px);
+    }
+
+    .submit-button:active {
+        transform: translateY(0);
+    }
+
+    .telegram-auth {
+        margin-bottom: 2rem;
+        text-align: center;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 2rem 0;
+    }
+
+    .divider::before,
+    .divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid #e0e0e0;
+    }
+
+    .divider span {
+        padding: 0 1rem;
+        color: #7f8c8d;
+        font-size: 0.9rem;
+        font-weight: 500;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(-10px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Стили для показа ошибок */
+    .form-input.error {
+        border-color: #e74c3c;
+    }
+
+    .form-input.success {
+        border-color: #2ecc71;
+    }
+
+    /* Адаптивность */
+    @media (max-width: 480px) {
+        .register-container {
+            margin: 1rem;
+            padding: 1rem;
+        }
+
+        .register-card {
+            padding: 1.5rem;
+        }
+
+        .register-title {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-input {
+            padding: 0.8rem;
+        }
+    }
+</style>
+
+<div class="register-container">
+    <h1 class="register-title">Создать аккаунт</h1>
+    
+    <div class="register-card">
+        <div class="telegram-auth">
+            <script async src="https://telegram.org/js/telegram-widget.js?22"
+                data-telegram-login="{{ bot_username }}"
+                data-size="large"
+                data-auth-url="/auth-tg"
+                data-request-access="write">
+            </script>
+        </div>
+
+        <div class="divider">
+            <span>или</span>
+        </div>
+
+        <form method="POST" action="{{ url_for('auth.register') }}" id="register_form_1">
+            {{ form.hidden_tag() }}
+            
+            <div class="form-group">
+                <label class="form-label" for="email_field_id_1">Email</label>
+                {{ form.email(class='form-input', id='email_field_id_1', placeholder='Введите ваш email') }}
+                <div id="login_error_message_register_1" class="error-message"></div>
+                {% for error in form.email.errors %}
+                    <div class="error-message" style="display: block;">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="login_field_id_1">Логин</label>
+                {{ form.login(class='form-input', id='login_field_id_1', placeholder='Придумайте логин') }}
+                {% for error in form.login.errors %}
+                    <div class="error-message" style="display: block;">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="password_field_id_1">Пароль</label>
+                {{ form.password(class='form-input', id='password_field_id_1', placeholder='Придумайте пароль') }}
+                {% for error in form.password.errors %}
+                    <div class="error-message" style="display: block;">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <div class="form-group">
+                <label class="form-label" for="confirm_password_1">Подтвердите пароль</label>
+                {{ form.confirm_password(class='form-input', id='confirm_password_1', placeholder='Повторите пароль') }}
+                {% for error in form.confirm_password.errors %}
+                    <div class="error-message" style="display: block;">{{ error }}</div>
+                {% endfor %}
+            </div>
+
+            <button type="submit" class="submit-button" id="submit_button_1">
+                {{ form.submit.label }}
+            </button>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('register_form_1');
+    const inputs = form.querySelectorAll('.form-input');
+
+    // Валидация в реальном времени
+    inputs.forEach(input => {
+        input.addEventListener('blur', function() {
+            validateField(this);
+        });
+    });
+
+    // Функция валидации полей
+    function validateField(field) {
+        const fieldName = field.id;
+        const value = field.value;
+
+        field.classList.remove('error', 'success');
+
+        if (!value) {
+            showError(field, 'Это поле обязательно для заполнения');
+            return false;
+        }
+
+        if (fieldName === 'email_field_id_1') {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(value)) {
+                showError(field, 'Введите корректный email адрес');
+                return false;
+            }
+        }
+
+        if (fieldName === 'password_field_id_1') {
+            if (value.length < 5) {
+                showError(field, 'Пароль должен содержать минимум 5 символов');
+                return false;
+            }
+        }
+
+        if (fieldName === 'confirm_password_1') {
+            const password = document.getElementById('password_field_id_1').value;
+            if (value !== password) {
+                showError(field, 'Пароли не совпадают');
+                return false;
+            }
+        }
+
+        field.classList.add('success');
+        hideError(field);
+        return true;
+    }
+
+    function showError(field, message) {
+        field.classList.add('error');
+        const errorDiv = field.nextElementSibling;
+        if (errorDiv && errorDiv.classList.contains('error-message')) {
+            errorDiv.textContent = message;
+            errorDiv.style.display = 'block';
+        }
+    }
+
+    function hideError(field) {
+        const errorDiv = field.nextElementSibling;
+        if (errorDiv && errorDiv.classList.contains('error-message')) {
+            errorDiv.style.display = 'none';
+        }
+    }
+
+    // Обработка отправки формы
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+        let isValid = true;
+
+        inputs.forEach(input => {
+            if (!validateField(input)) {
+                isValid = false;
+            }
+        });
+
+        if (isValid) {
+            this.submit();
+        }
+    });
+});
+</script>
+{% endblock %}
